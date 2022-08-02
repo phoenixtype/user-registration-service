@@ -27,6 +27,6 @@ public class UserRegistrationRequest {
     private String password;
     //check if not blank (Validation)
     @NotBlank (message = "IPAddress cannot be empty")
-    private String IpAddress;
+    private String ipaddress;
 
 }

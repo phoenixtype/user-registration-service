@@ -35,6 +35,5 @@ public class UserRegistrationResponse {
     private String as;
     private String query;
 
-    private String welcomeMessage;
 
 }

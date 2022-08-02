@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * <p>
  * - The API need to have OpenAPI specification, no matter what your approach is code first or design first.
  * <p>
- * - //Project must use Maven or Gradle to build. Generate a spring boot project here: javax.swing.Spring Initializr
+ * - Project must use Maven or Gradle to build. Generate a spring boot project here: javax.swing.Spring Initializr
  * <p>
  * - Need to have JUnit Tests
  **/
@@ -61,11 +61,11 @@ public class UserRegistrationService {
             log.info("userRegistrationResponse: " + userRegistrationResponse);
             //When all validation is passed return uuid and welcome message (with username and city name)
             if (userRegistrationResponse.getCountry().contains("Canada")) {
-                log.info("Entered if statement");
                 response = "Hello " + userRegistrationRequest.getUsername() +
                         ", your unique id value is " + userRegistrationResponse.getUUID() +
                         " and welcome to this demo application, we are sending you updates based on activities in the city of "
                         + userRegistrationResponse.getCity();
+                log.info(response);
 
             } else {
                 log.info("Service only available in Canada");
@@ -74,7 +74,7 @@ public class UserRegistrationService {
         } else {
             log.info("Invalid Password value, please enter a correct password");
         }
-        log.info(response);
+
         return response;
     }
 }
