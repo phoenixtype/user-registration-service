@@ -1,7 +1,6 @@
 package com.phoenixtype.userregistrationservice.controller;
 
 import com.phoenixtype.userregistrationservice.model.UserRegistrationRequest;
-import com.phoenixtype.userregistrationservice.model.UserRegistrationResponse;
 import com.phoenixtype.userregistrationservice.service.UserRegistrationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,8 @@ import java.util.Optional;
 @RequestMapping("api/v1/users")
 @AllArgsConstructor
 public class UserRegistrationController {
-    @Autowired UserRegistrationService userRegistrationService;
+    @Autowired
+    UserRegistrationService userRegistrationService;
 
     @Autowired
     SmartValidator smartValidator;
@@ -30,9 +30,7 @@ public class UserRegistrationController {
     @PostMapping
     public void registerCustomer(@RequestBody UserRegistrationRequest userRegistrationRequest) throws Exception {
         log.info("new user registration {}", userRegistrationRequest);
-
         validateRequestBody(userRegistrationRequest);
-        String message = userRegistrationService.registerUser(userRegistrationRequest);
         userRegistrationService.registerUser(userRegistrationRequest);
     }
 

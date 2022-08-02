@@ -1,12 +1,83 @@
 package com.phoenixtype.userregistrationservice.service;
 
+import com.phoenixtype.userregistrationservice.model.User;
 import com.phoenixtype.userregistrationservice.model.UserRegistrationRequest;
 import com.phoenixtype.userregistrationservice.model.UserRegistrationResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
-public interface UserRegistrationService {
-    String registerUser(UserRegistrationRequest userRegistrationRequest);
+@Slf4j
+public class UserRegistrationService {
+
+    private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
+    private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+    private final String uuid = UUID.randomUUID().toString().replace("-", "");
+    @Autowired
+    UserRegistrationRequest userRegistrationRequest;
+    @Autowired
+    User user;
+
+    public static boolean isValid(final String password) {
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
+    }
+
+    public String registerUser(UserRegistrationRequest userRegistrationRequest) throws Exception {
+        String response = null;
+        RestTemplate restTemplate = null;
+        UserRegistrationResponse userRegistrationResponse = null;
+
+        userRegistrationResponse.setUUID(uuid);
+
+        //check password validation
+        if (isValid(userRegistrationRequest.getPassword())) {
+            //call endpoint to get geolocation and if not in canada return error message - User cannot be registered
+            try {
+                userRegistrationResponse = restTemplate.getForObject("http://ip-api.com/json", UserRegistrationResponse.class);
+                if (userRegistrationResponse.getCountryCode() == "CA" || userRegistrationResponse.getCountry() == "Canada") {
+                    //When all validation is passed return uuid and welcome message (with username and city name)
+                    response = "Hello " + userRegistrationRequest.getUsername() +
+                            ", your unique id value is " + userRegistrationResponse.getUUID() +
+                            " welcome to this demo application, we are sending you updates based on activities in the city of  "
+                            + userRegistrationResponse.getCity();
+                }
+            } catch (Exception e) {
+                log.info("Service only available in Canada");
+                System.out.println("Service only available in Canada");
+            }
+
+        } else {
+            log.info("Invalid Password value, please enter a correct password");
+            System.out.println("Invalid Password value, please enter a correct password");
+            throw new Exception();
+        }
+
+        return response;
+    }
+
+
+//    @Bean
+//    public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
+//        return args -> {
+//            UserRegistrationResponse userRegistrationResponse = restTemplate.getForObject(
+//                    "http://ip-api.com/json", UserRegistrationResponse.class);
+//
+//        };
+//    }
+//
+//    @Bean
+//    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+//        return builder.build();
+//    }
 
     /**
 
@@ -24,10 +95,11 @@ public interface UserRegistrationService {
 
      - The API need to have OpenAPI specification, no matter what your approach is code first or design first.
 
-     - Project must use Maven or Gradle to build. Generate a spring boot project here: javax.swing.Spring Initializr
+     - //Project must use Maven or Gradle to build. Generate a spring boot project here: javax.swing.Spring Initializr
 
      - Need to have JUnit Tests
 
      **/
+
 
 }

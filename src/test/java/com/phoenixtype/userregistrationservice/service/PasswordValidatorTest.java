@@ -3,7 +3,6 @@ package com.phoenixtype.userregistrationservice.service;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,13 +14,13 @@ public class PasswordValidatorTest {
     @ParameterizedTest(name = "#{index} - Run test with password = {0}")
     @MethodSource("validPasswordProvider")
     void test_password_regex_valid(String password) {
-        assertTrue(UserRegistrationServiceImpl.isValid(password));
+        assertTrue(UserRegistrationService.isValid(password));
     }
 
     @ParameterizedTest(name = "#{index} - Run test with password = {0}")
     @MethodSource("invalidPasswordProvider")
     void test_password_regex_invalid(String password) {
-        assertFalse(UserRegistrationServiceImpl.isValid(password));
+        assertFalse(UserRegistrationService.isValid(password));
     }
 
     static Stream<String> validPasswordProvider() {
