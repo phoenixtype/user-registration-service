@@ -3,7 +3,6 @@ package com.phoenixtype.userregistrationservice.service;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,7 +39,7 @@ public class PasswordValidatorTest {
     // one uppercase character,
     // one digit,
     // one special character
-    // and length between 8 to 20.
+    // and length between 8 and 20.
     static Stream<String> invalidPasswordProvider() {
         return Stream.of(
                 "12345678",                 // invalid, only digit

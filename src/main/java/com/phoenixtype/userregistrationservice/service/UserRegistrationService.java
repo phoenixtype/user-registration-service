@@ -47,34 +47,42 @@ public class UserRegistrationService {
     public String registerUser(UserRegistrationRequest userRegistrationRequest) throws Exception {
         String response = null;
 
-        //check password validation
-        if (isValid(userRegistrationRequest.getPassword())) {
-            //call endpoint to get geolocation and if not in canada return error message - User cannot be registered
-            log.info("isValid true?" + userRegistrationRequest);
-            log.info("password: " + userRegistrationRequest.getPassword());
-            log.info("userRegistrationResponse: " + userRegistrationResponse);
+        try {
+            //check password validation
+            if (isValid(userRegistrationRequest.getPassword())) {
+                //call endpoint to get geolocation and if not in canada return error message - User cannot be registered
+                log.info("isValid true?" + userRegistrationRequest);
+                log.info("password: " + userRegistrationRequest.getPassword());
+                log.info("userRegistrationResponse: " + userRegistrationResponse);
 
 
-            RestTemplate restTemplate = new RestTemplate();
-            userRegistrationResponse = restTemplate.getForObject("http://ip-api.com/json", UserRegistrationResponse.class);
-            userRegistrationResponse.setUUID(uuid);
-            log.info("userRegistrationResponse: " + userRegistrationResponse);
-            //When all validation is passed return uuid and welcome message (with username and city name)
-            if (userRegistrationResponse.getCountry().contains("Canada")) {
-                response = "Hello " + userRegistrationRequest.getUsername() +
-                        ", your unique id value is " + userRegistrationResponse.getUUID() +
-                        " and welcome to this demo application, we are sending you updates based on activities in the city of "
-                        + userRegistrationResponse.getCity();
-                log.info(response);
-
+                RestTemplate restTemplate = new RestTemplate();
+                userRegistrationResponse = restTemplate.getForObject("http://ip-api.com/json", UserRegistrationResponse.class);
+                userRegistrationResponse.setUUID(uuid);
+                log.info("userRegistrationResponse: " + userRegistrationResponse);
+                try {
+                    //When all validation is passed return uuid and welcome message (with username and city name)
+                    if (userRegistrationResponse.getCountry().contains("Canada1")) {
+                        response = "Hello " + userRegistrationRequest.getUsername() +
+                                ", your unique one time ID is " + userRegistrationResponse.getUUID() +
+                                " and welcome to this demo application, we are sending you updates based on activities in the city of "
+                                + userRegistrationResponse.getCity();
+                        log.info(response);
+                    } else {
+                        throw new Exception();
+                    }
+                }
+                catch (Exception e) {
+                    response = "Service only available in Canada";
+                    return response;
+                }
             } else {
-                log.info("Service only available in Canada");
+                throw new Exception();
             }
-
-        } else {
-            log.info("Invalid Password value, please enter a correct password");
+        } catch (Exception e) {
+            response = "Invalid Password value, please enter a correct password";
+            return response;
         }
-
         return response;
     }
 }
