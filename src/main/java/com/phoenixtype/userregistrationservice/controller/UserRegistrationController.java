@@ -71,7 +71,7 @@ public class UserRegistrationController {
             return new ResponseEntity<String>(userRegistrationResponseString, HttpStatus.OK);
         }
         catch (ResponseStatusException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The has been a problem with your request");
 
         }
 //        validateRequestBody(userRegistrationRequest);
