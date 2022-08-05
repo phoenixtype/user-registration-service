@@ -55,14 +55,13 @@ public class UserRegistrationService {
                 log.info("password: " + userRegistrationRequest.getPassword());
                 log.info("userRegistrationResponse: " + userRegistrationResponse);
 
-
                 RestTemplate restTemplate = new RestTemplate();
                 userRegistrationResponse = restTemplate.getForObject("http://ip-api.com/json", UserRegistrationResponse.class);
                 userRegistrationResponse.setUUID(uuid);
                 log.info("userRegistrationResponse: " + userRegistrationResponse);
                 try {
                     //When all validation is passed return uuid and welcome message (with username and city name)
-                    if (userRegistrationResponse.getCountry().contains("Canada1")) {
+                    if (userRegistrationResponse.getCountry().contains("Canada")) {
                         response = "Hello " + userRegistrationRequest.getUsername() +
                                 ", your unique one time ID is " + userRegistrationResponse.getUUID() +
                                 " and welcome to this demo application, we are sending you updates based on activities in the city of "

@@ -1,9 +1,14 @@
 package com.phoenixtype.userregistrationservice.controller;
 
+import com.phoenixtype.userregistrationservice.model.User;
 import com.phoenixtype.userregistrationservice.model.UserRegistrationRequest;
 import com.phoenixtype.userregistrationservice.model.UserRegistrationResponse;
 import com.phoenixtype.userregistrationservice.service.UserRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +18,7 @@ import org.springframework.validation.DataBinder;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 /**
@@ -37,6 +43,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
+@Tag(name = "User Registration")
 @RequestMapping("/api")
 public class UserRegistrationController {
     @Autowired
@@ -46,13 +53,30 @@ public class UserRegistrationController {
     SmartValidator smartValidator;
 
     @PostMapping("/registerCustomer")
-    @Operation(summary = "Post method in the controller class for user registration logic")
+    @Operation(summary = "Post method in the controller class for user registration logic", responses = {
+            @ApiResponse(description = "Return success and the user registration response message",
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserRegistrationRequest.class))),
+            @ApiResponse(description = "Bad Request",
+                    responseCode = "400",
+                    content = @Content)
+    })
     @ResponseBody
     public ResponseEntity<String> registerCustomer(@RequestBody UserRegistrationRequest userRegistrationRequest) throws Exception {
         log.info("new user registration {}", userRegistrationRequest);
-        validateRequestBody(userRegistrationRequest);
-        String userRegistrationResponseString = userRegistrationService.registerUser(userRegistrationRequest);
-        return new ResponseEntity<String>(userRegistrationResponseString, HttpStatus.OK);
+        try {
+            validateRequestBody(userRegistrationRequest);
+            String userRegistrationResponseString = userRegistrationService.registerUser(userRegistrationRequest);
+            return new ResponseEntity<String>(userRegistrationResponseString, HttpStatus.OK);
+        }
+        catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        }
+//        validateRequestBody(userRegistrationRequest);
+//        String userRegistrationResponseString = userRegistrationService.registerUser(userRegistrationRequest);
+//        return new ResponseEntity<String>(userRegistrationResponseString, HttpStatus.OK);
     }
 
     private <T> void validateRequestBody(T body) throws Exception {
